@@ -112,6 +112,7 @@ test('session sheet shows counters and keeps prompt content out of the panel', a
   await page.getByRole('button', { name: /project/ }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toContainText('test-model');
+  await expect(dialog.locator('button.session-close svg.ico')).toBeVisible();
   await expect(dialog).toContainText('1.2k');
   await expect(dialog).toContainText('read');
   await page.getByRole('button', { name: 'Close session details' }).click();
