@@ -37,9 +37,9 @@ W.clock = {
           mm.textContent = pad(now.getMinutes());
           ss.textContent = cfg.display?.showSeconds === false ? '' : pad(now.getSeconds());
           if (date) date.textContent = now.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long' });
-          if (status && now.getSeconds() % 30 === 0) renderStatus(status); // battery
+          if (status && now.getSeconds() % 30 === 0) renderStatus(status, o); // battery
         } else if (kind === 'weather') wx?.update();
-        else if (status) renderStatus(status);
+        else if (status) renderStatus(status, o);
       },
     };
   },

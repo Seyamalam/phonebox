@@ -474,7 +474,7 @@ export function phoneBattery() {
 
 export function quotaProviders() { return D.quotas?.providers || []; }
 
-export function renderStatus(el) {
+export function renderStatus(el, o = {}) {
   const via = transport();
   const name = online ? (D.state?.host || 'PC') + (via === 'wifi' ? ' · ' + t('status.wiFi') : via === 'usb' ? ' · ' + t('status.usb') : '') : online === false ? t('panel.pcNotConnected') : t('panel.connecting');
   const kids = [h('span', 'dot ' + (online ? 'on' : online === false ? 'off' : '')), h('span', null, name)];
@@ -482,7 +482,8 @@ export function renderStatus(el) {
   if (bat) kids.push(h('span', 'sep', '·'), h('span', null, bat));
   for (const p of quotaProviders()) {
     const l = p.limits?.[0];
-    if (!l) continue;
+    // Clocks saved before the Providers option have none: show every provider like before.
+    if (!l || (o.providers != null && !o.providers.includes(p.id))) continue;
     const s = h('span', 'qm', h('span', 'sep', '·'), p.name + ' ', h('b', null, Math.round(l.percent) + '%'));
     if (l.percent >= 95) s.style.color = '#f87171'; else if (l.percent >= 80) s.style.color = '#fbbf24';
     kids.push(s);

@@ -75,6 +75,20 @@ test('a timer in a stack rings when another page is active', async ({ page }) =>
   await expect(page.locator('#toast')).toContainText('Time is up', { timeout: 1200 });
 });
 
+test('clock status line can hide quota providers', async ({ page }) => {
+  await layout(page, [widget('clock', { providers: ['claude'] })]);
+  const status = page.locator('.w-clock .status');
+  await expect(status).toContainText('Claude');
+  await expect(status).not.toContainText('Codex');
+  await layout(page, [widget('clock', { providers: [] })]);
+  // An early "no Claude" would pass before /api/quotas answers: wait for a rendered status
+  // line and the quota payload, then both providers must be absent.
+  await expect(page.locator('.w-clock .status')).toContainText('82%');
+  await page.waitForFunction(async () => (await import('/panel/main.js')).D.quotas !== null);
+  await expect(page.locator('.w-clock .status')).not.toContainText('Claude');
+  await expect(page.locator('.w-clock .status')).not.toContainText('Codex');
+});
+
 test('quota selection preserves empty selections and explains missing data', async ({ page }) => {
   await layout(page, [widget('quotas', { providers: [] })]);
   await expect(page.locator('.w-quotas')).toContainText('No quota providers enabled');
